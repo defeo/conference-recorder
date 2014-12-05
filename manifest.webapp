@@ -1,0 +1,36 @@
+{
+  "version": "0.1.0",
+  "type": "certified",
+  "name": "Conference recorder",
+  "description": "A voice recorder that keeps working in the background",
+  "launch_path": "/index.html",
+  "icons": {
+    "16": "/img/icons/rec16x16.png",
+    "48": "/img/icons/rec48x48.png",
+    "60": "/img/icons/rec60x60.png",
+    "128": "/img/icons/rec128x128.png"
+  },
+  "developer": {
+    "name": "Luca De Feo",
+    "url": "http://defeo.lu/"
+  },
+  "type": "privileged",
+  "permissions": {
+    "power" : {
+      "description": "Run in background"
+    },
+    "audio-capture": {
+      "description": "Record audio"
+    },
+    "device-storage:music": {
+      "access": "readwrite",
+      "description": "Write to sd card"
+    }
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "locales": {
+  },
+  "default_locale": "en"
+}
