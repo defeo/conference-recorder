@@ -1,7 +1,6 @@
 window.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
-    var lock = window.navigator.requestWakeLock("cpu");
     var rec = document.querySelector("body");
     var sd = navigator.getDeviceStorage("music");
     
@@ -9,33 +8,41 @@ window.addEventListener('DOMContentLoaded', function() {
 			       navigator.webkitGetUserMedia ||
 			       navigator.mozGetUserMedia ||
 			       navigator.msGetUserMedia);
-    
+
     if (navigator.getUserMedia) {
 	navigator.getUserMedia ({ audio: true }, function(stream) {
-	    var mediaRecorder = new MediaRecorder(stream);
+	    var lock, base, counter,
+		mediaRecorder = new MediaRecorder(stream);
 	    
-	    rec.onclick = function() {
-		console.log("tap");
-		if (mediaRecorder.state == "recording") {
-		    mediaRecorder.stop();
-		    rec.classList.remove('rec');
-		} else {
-		    mediaRecorder.start();
-		    rec.classList.add('rec');
-		}
-	    }
-
 	    mediaRecorder.ondataavailable = function(e) {
-		var request = sd.add(e.data);
+		var request = sd.addNamed(e.data, base + '-' + counter + '.oga');
+		counter += 1;
 		request.onsuccess = function() {
 		    console.log(this.result);
 		}
 		request.onerror = function(e) {
-		    console.log('File write error: ' +e);
+		    console.log(e);
 		    mediaRecorder.stop();
-		    rec.classList.remove('rec');
 		}
-	    };
+	    }
+	    mediaRecorder.onstop = function() {
+		console.log('stop');
+		rec.classList.remove('rec');
+		if (lock) lock.unlock();
+	    }
+
+	    rec.onclick = function() {
+		if (mediaRecorder.state == "inactive") {
+		    console.log('recording');
+		    rec.classList.add('rec');
+		    lock = window.navigator.requestWakeLock("cpu");
+		    base = 'recorder/' + (new Date()).getTime();
+		    counter = 1;
+		    mediaRecorder.start(60*1000);
+		} else {
+		    mediaRecorder.stop();
+		}
+	    }
 	}, function(err) {
 	    console.log("gUM error: " + err);
 	});
