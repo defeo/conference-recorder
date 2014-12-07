@@ -19,6 +19,9 @@
     "power" : {
       "description": "Run in background"
     },
+    "backgroundservice": {
+      "description": "Run in background"
+    },
     "audio-capture": {
       "description": "Record audio"
     },
